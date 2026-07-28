@@ -3,12 +3,13 @@
 Concept: a screen frame (solid) with an oversized shape bleeding past its edge —
 the part inside the frame is opaque, the part outside is ghosted. That IS the bug
 the plugin finds, drawn literally.
+
+Usage: python3 assets/make_assets.py   (requires Pillow; macOS system fonts)
 """
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-OUT = "/Users/loganlee/project/portfolio/frame-audit/assets"
-os.makedirs(OUT, exist_ok=True)
+OUT = os.path.dirname(os.path.abspath(__file__))
 
 INK = (24, 24, 27)
 PAPER = (250, 250, 250)
