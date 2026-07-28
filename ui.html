@@ -1,0 +1,102 @@
+<style>
+  body { font: 11px/1.5 Inter, sans-serif; margin: 0; padding: 12px; color: #333; }
+  h2 { font-size: 13px; margin: 0 0 6px; }
+  #summary { margin-bottom: 10px; color: #555; }
+  #summary b { margin-right: 8px; }
+  .page-group { margin-bottom: 10px; }
+  .page-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 8px; background: #ececf1; border-radius: 6px;
+    font-weight: 700; cursor: pointer; user-select: none;
+  }
+  .page-header .n { color: #666; font-weight: 400; }
+  .page-body { margin-top: 4px; }
+  .collapsed .page-body { display: none; }
+  .finding { padding: 6px 8px; border-radius: 6px; margin-bottom: 4px; cursor: pointer; background: #f5f5f5; }
+  .finding:hover { background: #e8e8ff; }
+  .rule { font-weight: 700; margin-right: 6px; }
+  .OVERFLOW { color: #c2410c; }
+  .GIANT { color: #b91c1c; }
+  .HIDDEN { color: #6b7280; }
+  .IMAGE_BLOAT { color: #7c3aed; }
+  .BASE_SIZE { color: #0369a1; }
+  .detail { color: #666; }
+  .empty { color: #16a34a; font-size: 13px; }
+  #skipped { margin-top: 10px; color: #999; }
+</style>
+<h2>Frame Audit</h2>
+<div id="summary"></div>
+<div id="list"></div>
+<div id="skipped"></div>
+<script>
+  onmessage = (event) => {
+    const msg = event.data.pluginMessage
+    if (!msg || msg.type !== 'results') return
+
+    const summary = document.getElementById('summary')
+    const list = document.getElementById('list')
+    const skipped = document.getElementById('skipped')
+
+    if (msg.skippedPages && msg.skippedPages.length) {
+      skipped.textContent = 'Skipped pages (decorative): ' + msg.skippedPages.join(', ')
+    }
+
+    if (msg.findings.length === 0) {
+      list.innerHTML = '<div class="empty">Clean — no findings 🎉</div>'
+      return
+    }
+
+    const ruleCounts = {}
+    const byPage = new Map()
+    for (const f of msg.findings) {
+      ruleCounts[f.rule] = (ruleCounts[f.rule] || 0) + 1
+      if (!byPage.has(f.page)) byPage.set(f.page, [])
+      byPage.get(f.page).push(f)
+    }
+
+    summary.innerHTML = '<b></b>'
+    summary.querySelector('b').textContent = msg.findings.length + ' findings'
+    for (const [rule, count] of Object.entries(ruleCounts)) {
+      const span = document.createElement('span')
+      span.className = 'rule ' + rule
+      span.textContent = rule + ' ' + count + '  '
+      summary.appendChild(span)
+    }
+
+    for (const [page, items] of byPage) {
+      const group = document.createElement('div')
+      group.className = 'page-group'
+
+      const header = document.createElement('div')
+      header.className = 'page-header'
+      const title = document.createElement('span')
+      title.textContent = page
+      const n = document.createElement('span')
+      n.className = 'n'
+      n.textContent = items.length + ' ▾'
+      header.append(title, n)
+      header.onclick = () => group.classList.toggle('collapsed')
+
+      const body = document.createElement('div')
+      body.className = 'page-body'
+      for (const f of items) {
+        const div = document.createElement('div')
+        div.className = 'finding'
+        const rule = document.createElement('span')
+        rule.className = 'rule ' + f.rule
+        rule.textContent = f.rule
+        const name = document.createElement('b')
+        name.textContent = ' ' + f.name
+        const detail = document.createElement('div')
+        detail.className = 'detail'
+        detail.textContent = f.detail
+        div.append(rule, name, detail)
+        div.onclick = () => parent.postMessage({ pluginMessage: { type: 'jump', nodeId: f.nodeId } }, '*')
+        body.appendChild(div)
+      }
+
+      group.append(header, body)
+      list.appendChild(group)
+    }
+  }
+</script>
