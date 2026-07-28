@@ -2,14 +2,34 @@
 
 Everything needed for the submission form, ready to paste. Assets are in `assets/`.
 
-## Before you start
+## Publish from the right account — do this first
 
-- Publish from the **Figma desktop app**, signed in as the account that should own
-  the plugin. On Org/Enterprise plans you can publish under a team or the org
-  instead of your personal account — pick this deliberately, it is who users will
-  see as the author.
-- The plugin must already be imported as a Development plugin
-  (Plugins → Development → Import plugin from manifest…).
+**Publisher identity is effectively permanent.** Figma's docs state you cannot
+transfer ownership of a plugin published outside an organization; the only route
+afterwards is a discretionary Figma Support ticket. Get this right before clicking
+Publish — there is no clean undo.
+([Manage plugins as a developer](https://help.figma.com/hc/en-us/articles/360042293714))
+
+Do **not** publish from a work-email account. The company can't seize the account
+itself on a Professional plan (that requires Org/Enterprise with SSO), but if the
+address is ever deprovisioned you lose the login — and with it the ability to
+update or unpublish. What happens to a published plugin when its account dies is
+not documented anywhere, so avoid the scenario rather than plan to recover from it.
+A "personal team" that sits under a work-email account does not help; it's the
+same account.
+
+Setup:
+
+1. Use (or create) a Figma account whose **primary email is personal**.
+2. **Enable 2FA** on it — required to publish.
+3. Desktop app → avatar menu → **Add account** (up to 10, switch without logging
+   out) → sign in as the personal account.
+4. Re-import the plugin under that session: **Plugins → Development → Import plugin
+   from manifest…** → `manifest.json`. Development plugins appear to be registered
+   per account, so re-import rather than assume it carried over.
+5. Keep the plugin's source file in that account's **drafts** — never inside a
+   company team, since file location constrains which profiles you may publish to.
+6. At the final step, publish **as yourself** (personal profile), free.
 
 ## Flow
 
@@ -21,6 +41,11 @@ Everything needed for the submission form, ready to paste. Assets are in `assets
 
 You can unpublish at any time (Manage resource → Unpublish). It disappears from
 the Community and from users who installed it, but stays in your dev account.
+
+Irreversible, worth repeating: the publisher identity is not freely reassignable,
+a plugin published to a team profile can never be moved to another team, and
+deleting an in-development plugin forfeits its likes and installs even if you
+republish later.
 
 ## Assets
 
