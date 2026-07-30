@@ -36,8 +36,8 @@ Setup:
 1. Figma menu → **Plugins → Manage plugins → Publish**.
 2. Fill the four steps below (Describe → Images → Data security → Final details).
 3. Submit. Review is done by a human and **can take up to two weeks**.
-4. Figma generates a real plugin `id` on first publish — paste it into
-   `manifest.json`, replacing `"frame-audit-dev-mode"`, and commit that change.
+4. Figma generates a real plugin `id` on first publish and asks you to put it in
+   the manifest. Already done — `manifest.json` carries `1664691280220280337`.
 
 You can unpublish at any time (Manage resource → Unpublish). It disappears from
 the Community and from users who installed it, but stays in your dev account.
